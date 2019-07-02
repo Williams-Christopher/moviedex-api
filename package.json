@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server",
     "dev": "nodemon server",
-    "debug": "nodemon debug",
+    "debug": "ndb nodemon server",
     "test": "mocha"
   },
   "keywords": [],
