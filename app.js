@@ -12,7 +12,8 @@ const app = express();
 // the X-Powered-By header to continue to appear. Placeing cors near the
 // bottom keeps it from working... /sheesh
 // Middleware
-app.use(morgan('common'));
+const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'common';
+app.use(morgan(morganSetting));
 app.use(helmet());
 app.use(cors());
 // Our custom Authorization function
@@ -23,6 +24,17 @@ app.use(function validateHeaderAuthorization(req, res, next) {
         return res.status(401).json({'error': 'request could not be authorized'})
     }
     next();
+});
+// Minimal error messages in production
+app.use((error, req, res, next) => {
+    let response;
+    if(process.env.NODE_ENV === 'production') {
+        response = {error: {message: 'Server error'}};
+    } else {
+        response = {error};
+    }
+
+    res.status(500).json(response);
 });
 
 // Our route handler and named callback
